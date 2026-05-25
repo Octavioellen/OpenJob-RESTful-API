@@ -1,0 +1,40 @@
+const express = require('express');
+
+const { addUser } = require('./api/users');
+const getUsers = require('./api/getUsers');
+const loginUser = require('./api/loginUser');
+const addJob = require('./api/addJob');
+const getJobs = require('./api/getJobs');
+const updateJob = require('./api/updateJob');
+const deleteJob = require('./api/deleteJob');
+const getJobById = require('./api/getJobById');
+
+const auth = require('./middleware/auth');
+
+const router = express.Router();
+
+router.post('/users', addUser);
+
+router.get('/users', getUsers);
+
+router.post('/login', loginUser);
+
+router.get('/dashboard', auth, (request, response) => {
+  response.json({
+    status: 'success',
+    message: 'Berhasil mengakses dashboard',
+    user: request.user,
+  });
+});
+
+router.post('/jobs', auth, addJob);
+
+router.get('/jobs', getJobs);
+
+router.put('/jobs/:id', auth, updateJob);
+
+router.delete('/jobs/:id', auth, deleteJob);
+
+router.get('/jobs/:id', getJobById);
+
+module.exports = router;
