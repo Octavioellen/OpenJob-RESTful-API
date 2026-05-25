@@ -25,7 +25,6 @@ const getJobById = async (request, response) => {
       },
     });
   } catch (error) {
-    console.log(error);
 
     response.status(500).json({
       status: 'error',

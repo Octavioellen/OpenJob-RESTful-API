@@ -14,7 +14,6 @@ const deleteJob = async (request, response) => {
       message: 'Lowongan berhasil dihapus',
     });
   } catch (error) {
-    console.log(error);
 
     response.status(500).json({
       status: 'error',

@@ -13,15 +13,15 @@ const auth = (request, response, next) => {
 
     const token = authHeader.split(' ')[1];
 
-    console.log(token);
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_KEY,
+    );
 
     request.user = decoded;
 
     next();
   } catch (error) {
-    console.log(error);
 
     return response.status(401).json({
       status: 'fail',

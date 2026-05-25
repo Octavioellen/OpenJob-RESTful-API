@@ -1,30 +1,34 @@
-const { nanoid } = require('nanoid');
 const bcrypt = require('bcrypt');
-const pool = require('../services/database');
+const { nanoid } = require('nanoid');
+const pool = require('../services/postgres');
 
-const addUser = async (request, h) => {
-  const { fullname, email, password } = request.payload;
+const addUser = async (request, response, next) => {
+  try {
 
-  const id = `user-${nanoid(16)}`;
-  const hashedPassword = await bcrypt.hash(password, 10);
+    const { fullname, email, password } = request.body;
 
-  const query = {
-    text: `
-      INSERT INTO users(id, fullname, email, password)
-      VALUES($1, $2, $3, $4)
-      RETURNING id
-    `,
-    values: [id, fullname, email, hashedPassword],
-  };
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const result = await pool.query(query);
+    const id = `user-${nanoid(16)}`;
 
-  return h.response({
-    status: 'success',
-    data: {
-      userId: result.rows[0].id,
-    },
-  }).code(201);
+    const query = {
+      text: `
+        INSERT INTO users(id, fullname, email, password)
+        VALUES($1, $2, $3, $4)
+        RETURNING id
+      `,
+      values: [id, fullname, email, hashedPassword],
+    };
+
+    await pool.query(query);
+
+    response.status(201).json({
+      status: 'success',
+      message: 'User berhasil ditambahkan',
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = { addUser };

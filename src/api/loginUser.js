@@ -1,9 +1,10 @@
-const pool = require('../services/postgres');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const pool = require('../services/postgres');
 
 const loginUser = async (request, response) => {
   try {
+
     const { email, password } = request.body;
 
     const query = {
@@ -13,7 +14,7 @@ const loginUser = async (request, response) => {
 
     const result = await pool.query(query);
 
-    if (result.rows.length === 0) {
+    if (!result.rows.length) {
       return response.status(401).json({
         status: 'fail',
         message: 'Email atau password salah',
@@ -30,28 +31,37 @@ const loginUser = async (request, response) => {
         message: 'Email atau password salah',
       });
     }
-
-    const token = jwt.sign(
+ 
+    const accessToken = jwt.sign(
       {
         id: user.id,
         email: user.email,
       },
-      process.env.JWT_SECRET
+      process.env.ACCESS_TOKEN_KEY,
+      {
+        expiresIn: '3h',
+      },
     );
 
-    return response.status(200).json({
+    const refreshToken = jwt.sign(
+      {
+        id: user.id,
+      },
+      process.env.REFRESH_TOKEN_KEY,
+    );
+
+    response.json({
       status: 'success',
-      message: 'Login berhasil',
       data: {
-        token,
+        accessToken,
+        refreshToken,
       },
     });
   } catch (error) {
-    console.log(error);
 
-    return response.status(500).json({
+    response.status(500).json({
       status: 'error',
-      message: 'Terjadi kesalahan server',
+      message: error.message,
     });
   }
 };
