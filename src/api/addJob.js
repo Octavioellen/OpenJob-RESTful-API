@@ -3,7 +3,6 @@ const pool = require('../services/postgres');
 
 const addJob = async (request, response) => {
   try {
-
     const { title, company, location, description } = request.body;
 
     const userId = request.user.id;
@@ -37,10 +36,11 @@ const addJob = async (request, response) => {
       },
     });
   } catch (error) {
+    console.log(error);
 
     return response.status(500).json({
       status: 'error',
-      message: error.message,
+      message: 'Terjadi kesalahan server',
     });
   }
 };

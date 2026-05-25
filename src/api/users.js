@@ -4,7 +4,6 @@ const pool = require('../services/postgres');
 
 const addUser = async (request, response, next) => {
   try {
-
     const { fullname, email, password } = request.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);

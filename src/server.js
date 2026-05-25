@@ -7,8 +7,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use(routes);
-
 app.get('/test', (request, response) => {
   response.json({
     status: 'success',
@@ -16,7 +14,10 @@ app.get('/test', (request, response) => {
   });
 });
 
+app.use(routes);
+
 app.use((error, request, response, next) => {
+  console.log(error);
 
   response.status(500).json({
     status: 'error',
@@ -27,4 +28,5 @@ app.use((error, request, response, next) => {
 const PORT = process.env.PORT || 9000;
 
 app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

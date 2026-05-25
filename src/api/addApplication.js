@@ -29,7 +29,7 @@ const addApplication = async (request, response) => {
 
     response.status(500).json({
       status: 'error',
-      message: error.message,
+      message: 'Terjadi kesalahan server',
     });
   }
 };
